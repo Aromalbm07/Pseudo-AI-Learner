@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pseudo AI Learner</title>
+  <meta name="description" content="Pseudo AI Learner — A static, futuristic, black-themed learning platform about Artificial Intelligence." />
+  <!--
+    Single-file static SPA for "Pseudo AI Learner"
+    Instructions: Save this file as `index.html` and open in VS Code (Live Server recommended) to preview.
+    The site is a single-page app (hash-based routing). Click navigation links to view topic pages.
+  -->
+  <style>
+    :root{
+      --bg:#05040a;
+      --panel:#0b0b12;
+      --muted:#9aa3c7;
+      --accent:#6ff3ff;
+      --neon:#7cfcff;
+      --glass: rgba(255,255,255,0.04);
+      --card: rgba(255,255,255,0.02);
+      --glass-2: rgba(255,255,255,0.02);
+      --maxw:1100px;
+      --ff-sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:radial-gradient(circle at 10% 10%, rgba(124,252,255,0.03), transparent 6%), linear-gradient(180deg, var(--bg), #02020a 60%);color:#cfe6ff;font-family:var(--ff-sans);}
+
+    /* moving stars background */
+.stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    background: black;
+}
+
+.stars::before,
+.stars::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+}
+
+/* small stars layer */
+.stars::before {
+    background: radial-gradient(#0ff 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.05;
+    transform: translateZ(0);
+    animation: drift 90s linear infinite, twinkle 3s ease-in-out infinite alternate, driftX 120s linear infinite;
+}
+
+/* larger stars layer */
+.stars::after {
+    background: radial-gradient(#6ff 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.03;
+    animation: drift 180s linear reverse infinite, twinkle 5s ease-in-out infinite alternate, driftX 200s linear reverse infinite;
+}
+
+/* vertical drift */
+@keyframes drift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-2000px); }
+}
+
+/* horizontal drift */
+@keyframes driftX {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(200px); }
+    100% { transform: translateX(0); }
+}
+
+/* twinkling effect */
+@keyframes twinkle {
+    0%, 50%, 100% { opacity: 0.03; }
+    25%, 75% { opacity: 0.07; }
+}
+
+    /* main layout */
+.wrap {
+    position: relative;
+    z-index: 2;
+    max-width: var(--maxw);
+    margin: 40px auto;
+    padding: 24px;
+
+    /* fade-in and slide-up for entire content */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: wrapAppear 0.8s forwards ease-out;
+}
+
+@keyframes wrapAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* header */
+header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+
+    /* fade-in and slide-in for header */
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: headerAppear 0.8s forwards ease-out;
+    animation-delay: 0.3s;
+}
+
+@keyframes headerAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* brand name */
+.brand {
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.4px;
+    color: var(--neon);
+    transition: all 0.3s ease;
+}
+
+/* neon glow on hover */
+.brand:hover {
+    text-shadow: 
+        0 0 8px rgba(124, 252, 255, 0.6),
+        0 0 16px rgba(124, 252, 255, 0.3),
+        0 0 24px rgba(124, 252, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* tagline */
+.tag {
+    font-size: 12px;
+    color: var(--muted);
+    opacity: 0;
+    animation: tagAppear 0.6s forwards ease-out;
+    animation-delay: 0.6s;
+}
+
+@keyframes tagAppear {
+    to {
+        opacity: 1;
+    }
+}
+
+
+   nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.navlink {
+    background: transparent;
+    border: 1px solid rgba(127, 255, 255, 0.06);
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: var(--neon);
+    text-decoration: none;
+    font-size: 14px;
+    backdrop-filter: blur(6px);
+    
+    /* Animation properties */
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+/* Neon glow effect on hover */
+.navlink::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(124, 252, 255, 0.5),
+                0 0 16px rgba(124, 252, 255, 0.3),
+                0 0 24px rgba(124, 252, 255, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.navlink:hover::after {
+    opacity: 1;
+}
+
+.navlink:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 6px 24px rgba(124, 252, 255, 0.1);
+}
+
+
+    .container{display:grid;grid-template-columns:300px 1fr;gap:22px}
+    @media (max-width:880px){.container{grid-template-columns:1fr}
+      .sidebar{order:2}
+      .main{order:1}
+    }
+
+    /* sidebar */
+.sidebar {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    border-radius: 12px;
+    padding: 18px;
+    min-height: 380px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    
+    /* fade-in animation on load */
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: sidebarAppear 0.8s forwards ease-out;
+}
+
+@keyframes sidebarAppear {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* search box */
+.search {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.search input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.3s ease;
+}
+
+.search input:focus {
+    border-color: var(--neon);
+    box-shadow: 0 0 8px rgba(124, 252, 255, 0.2);
+    outline: none;
+}
+
+/* topics */
+.topic {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* hover effect */
+.topic:hover {
+    background: linear-gradient(90deg, rgba(124, 252, 255, 0.02), rgba(127, 127, 255, 0.01));
+    transform: translateX(4px);
+}
+
+/* active topic */
+.topic.active {
+    box-shadow: 0 6px 18px rgba(124, 252, 255, 0.03);
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(90deg, rgba(124, 252, 255, 0.01), transparent);
+    transform: translateX(2px);
+}
+
+/* optional slide-in animation for each topic */
+.topic {
+    opacity: 0;
+    animation: topicAppear 0.5s forwards ease-out;
+}
+
+.topic:nth-child(1) { animation-delay: 0.1s; }
+.topic:nth-child(2) { animation-delay: 0.2s; }
+.topic:nth-child(3) { animation-delay: 0.3s; }
+/* add more delays for more topics */
+
+@keyframes topicAppear {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+   /* main card */
+.main {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.03);
+    min-height: 380px;
+    
+    /* fade-in and slide-up on load */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: mainAppear 0.8s forwards ease-out;
+}
+
+@keyframes mainAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* title section */
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* subtle neon glow on hover */
+.title h1:hover {
+    text-shadow: 0 0 8px rgba(124,252,255,0.6), 0 0 16px rgba(124,252,255,0.3);
+    transform: scale(1.02);
+}
+
+/* subtitle */
+.subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* content */
+.content {
+    margin-top: 16px;
+    line-height: 1.6;
+    color: #dbeeff;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: contentAppear 0.6s forwards ease-out;
+    animation-delay: 0.4s; /* delays after main card */
+}
+
+@keyframes contentAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+    /* code-esque card */
+    .card{background:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(255,255,255,0.02));padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);overflow:auto}
+
+    /* futuristic header neon */
+    .brand{background:linear-gradient(90deg,#6ff3ff,#9b7cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+    /* little animated orb */
+    .orb{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), rgba(124,252,255,0.06));box-shadow:0 6px 40px rgba(124,252,255,0.06);position:relative}
+    .orb::after{content:"";position:absolute;inset:0;border-radius:50%;filter:blur(10px);opacity:0.6}
+
+    /* topic cards inside content */
+    h2{margin-top:8px;color:var(--neon)}
+    a.inline{color:var(--accent);text-decoration:underline}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* small responsive tweaks for readability */
+    p small{color:var(--muted)}
+
+    /* subtle floating glow */
+    .glow{position:absolute;right:-100px;top:40%;width:320px;height:320px;border-radius:50%;filter:blur(80px);opacity:0.06;background:linear-gradient(90deg,#6ff3ff,#7c6bff);z-index:1}
+
+    /* table of contents */
+    .toc{display:flex;flex-direction:column;gap:8px}
+
+    /* breadcrumbs */
+    .crumbs{font-size:13px;color:var(--muted);margin-top:8px}
+
+    /* nicely styled lists */
+    ul.check{list-style:none;padding-left:0}
+    ul.check li{position:relative;padding-left:22px;margin-bottom:8px}
+    ul.check li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700}
+
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden></div>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="orb" aria-hidden></div>
+        <div>
+          <div class="brand">Pseudo AI Learner</div>
+          <div class="tag"> AI LEARNING PLATFORM</div>
+        </div>
+      </div>
+      <nav id="topnav" style="margin-left:auto"></nav>
+    </header>
+
+    <div class="container">
+      <aside class="sidebar">
+        <div class="search">
+          <input id="search" placeholder="Search topics... (try: 'nlp', 'reinforcement')" />
+          <button id="openall" title="Open all topics">☰</button>
+        </div>
+        <div class="toc" id="toc"></div>
+      </aside>
+
+      <main class="main">
+        <div class="title">
+          <div>
+            <h1 id="pagetitle">Welcome</h1>
+            <div class="subtitle" id="pagesub">Learn Artificial Intelligence — intro, techniques, tools, ethics, and recent advances.</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--muted)">Futuristic Life</div>
+            <div style="margin-top:6px"><small>Created by ft_aromal_</small></div>
+          </div>
+        </div>
+
+        <div class="content card" id="content">
+          <!-- dynamic content inserted here -->
+        </div>
+
+      </main>
+    </div>
+
+    <footer>
+      © Created by ft_aromal_ 
+    </footer>
+
+    <div class="glow"></div>
+  </div>
+
+  <script>
+    // === Single-file SPA data ===
+    const PAGES = {
+      'home':{
+        title:'Welcome to Pseudo AI Learner',
+        subtitle:'A learning platform for Artificial Intelligence — from basics to recent advances.',
+        content:`
+          <h2>What all you can learn</h2>
+          <p>Basics of AI – Intro, types, applications.
+
+Machine Learning & Deep Learning – Concepts and tutorials.
+
+Tools & Code Examples – Python, TensorFlow, PyTorch.
+
+Notes & Resources – Articles, guides, and videos.
+
+Hands-on Projects – Practice AI coding and projects.
+
+Ethics & Trends – AI limitations, bias, and future developments.</p>
+
+          <h2>Quick start</h2>
+          <ul class="check">
+            <li>Browse topics from the sidebar</li>
+            <li>Use the search box to filter topics</li>
+            <li>Click any <a class="inline" href="#ml">topic</a> to open the section</li>
+          </ul>
+
+          <h2>Core syllabus</h2>
+          <p>Introduction → Mathematics → Machine Learning → Deep Learning → Natural Language Processing → Computer Vision → Reinforcement Learning → Ethics & Safety → Tools & Resources</p>
+        `
+      },
+
+      'introduction':{
+        title:'Introduction to Artificial Intelligence',
+        subtitle:'What is AI, history, and major branches',
+        content:`
+          <h2>Definition</h2>
+          <p>Artificial Intelligence (AI) is a field of computer science that aims to create systems capable of tasks that normally require human intelligence — reasoning, learning, perception, language understanding, and planning.</p>
+
+          <h2>Short history</h2>
+          <p>AI started in the 1950s with symbolic approaches. The field has gone through cycles of optimism and reduced funding ("AI winters"). The 2010s saw a renaissance due to deep learning and large datasets.</p>
+
+          <h2>Major branches</h2>
+          <ul>
+            <li>Machine Learning (statistical learning from data)</li>
+            <li>Deep Learning (neural networks at scale)</li>
+            <li>Natural Language Processing (language understanding & generation)</li>
+            <li>Computer Vision (image & video understanding)</li>
+            <li>Reinforcement Learning (decision making via reward)</li>
+          </ul>
+        `
+      },
+
+      'math':{
+        title:'Mathematics for AI',
+        subtitle:'Linear algebra, calculus, probability, optimization',
+        content:`
+          <h2>Core math topics</h2>
+          <ul>
+            <li><strong>Linear Algebra</strong> — vectors, matrices, eigenvalues, SVD</li>
+            <li><strong>Calculus</strong> — gradients, chain rule, Hessians</li>
+            <li><strong>Probability & Statistics</strong> — distributions, Bayesian ideas, hypothesis testing</li>
+            <li><strong>Optimization</strong> — gradient descent, convexity, regularization</li>
+          </ul>
+          <p><small>Role of Mathematics in AI
+
+Linear Algebra
+
+Represents and manipulates data using vectors and matrices.
+
+Essential for neural networks, image processing, and transformations.
+
+Calculus
+
+Differentiation and integration help optimize AI models.
+
+Used in gradient descent to minimize errors in learning algorithms.
+
+Probability & Statistics
+
+Helps AI handle uncertainty and make predictions.
+
+Used in Bayesian models, hypothesis testing, and evaluation metrics.
+
+Discrete Mathematics & Logic
+
+Supports reasoning, algorithms, and problem-solving.
+
+Basis for search algorithms, decision trees, and knowledge representation.
+
+Optimization
+
+Finds best solutions for models, like minimizing loss in ML models.
+
+Used in training algorithms, resource allocation, and scheduling.
+
+Linear & Non-linear Algebraic Models
+
+For regression, classification, and pattern recognition.
+
+Transformations & Eigenvalues
+
+Important in dimensionality reduction (e.g., PCA) and understanding data patterns.
+
+Graph Theory
+
+Represents relationships, networks, and paths in AI applications. </small></p>
+        `
+      },
+
+      'ml':{
+        title:'Machine Learning (ML)',
+        subtitle:'Supervised, unsupervised, and classical algorithms',
+        content:`
+          <h2>Overview</h2>
+          <p>Machine learning builds mathematical models from data. It includes supervised learning (labels), unsupervised learning (structure discovery), and semi-supervised / self-supervised learning.</p>
+
+          <h2>Common algorithms</h2>
+          <ul>
+            <li>Linear & Logistic Regression</li>
+            <li>Decision Trees & Random Forests</li>
+            <li>Support Vector Machines</li>
+            <li>Clustering: K-Means, Hierarchical</li>
+            <li>Dimensionality reduction: PCA, t-SNE, UMAP</li>
+          </ul>
+
+          <h2>Popular libraries</h2>
+          <p>scikit-learn, XGBoost, LightGBM, CatBoost.</p>
+        `
+      },
+
+      'dl':{
+        title:'Deep Learning',
+        subtitle:'Neural networks, architectures, and training at scale',
+        content:`
+          <h2>What is deep learning?</h2>
+          <p>Deep learning uses multilayer neural networks to learn hierarchical representations. It powers much of modern AI: vision, language, speech, and more.</p>
+
+          <h2>Architectures</h2>
+          <ul>
+            <li>Feedforward / MLP</li>
+            <li>Convolutional Neural Networks (CNNs) — images</li>
+            <li>Recurrent Neural Networks (RNNs) / LSTM / GRU — older for sequences</li>
+            <li>Transformers — state-of-the-art for language & many modalities</li>
+          </ul>
+
+          <h2>Training tips</h2>
+          <ul>
+            <li>Use proper normalization and initialization</li>
+            <li>Regularize: dropout, weight decay</li>
+            <li>Use learning rate schedules and adaptive optimizers (Adam, AdamW)</li>
+          </ul>
+
+          <h2>Popular libraries</h2>
+          <p>PyTorch, TensorFlow / Keras, JAX.</p>
+        `
+      },
+
+      'nlp':{
+        title:'Natural Language Processing (NLP)',
+        subtitle:'Language models, embeddings, and transformers',
+        content:`
+          <h2>Core ideas</h2>
+          <p>NLP is about processing and generating human language. Key primitives: tokenization, embeddings, language modeling, sequence labeling, and translation.</p>
+
+          <h2>Transformers & LLMs</h2>
+          <p>Transformers (Vaswani et al., 2017) replaced previous sequence models and enabled large language models (LLMs). LLMs can generate text, answer questions, and be fine-tuned for tasks.</p>
+
+          <h2>Tools & libs</h2>
+          <p>Hugging Face Transformers, spaCy, NLTK, OpenNLP.</p>
+        `
+      },
+
+      'cv':{
+        title:'Computer Vision',
+        subtitle:'From image classification to detection & segmentation',
+        content:`
+          <h2>Topics</h2>
+          <p>Image classification, object detection (YOLO, Faster R-CNN), instance & semantic segmentation (Mask R-CNN, DeepLab), image generation (GANs, diffusion).</p>
+
+          <h2>Typical pipelines</h2>
+          <p>Data augmentation → model backbone (CNN/Transformer) → task-specific head → post-processing</p>
+
+          <h2>Tools</h2>
+          <p>OpenCV, Detectron2, MMDetection, torchvision.</p>
+        `
+      },
+
+      'rl':{
+        title:'Reinforcement Learning (RL)',
+        subtitle:'Agents, environments, rewards, and policies',
+        content:`
+          <h2>Basics</h2>
+          <p>RL studies how agents learn via interaction with an environment to maximize cumulative reward. Key terms: policy, reward, state, value function.</p>
+
+          <h2>Algorithms</h2>
+          <ul>
+            <li>Q-learning, SARSA</li>
+            <li>Policy gradients, REINFORCE</li>
+            <li>Actor-Critic methods (A2C, PPO, SAC)</li>
+          </ul>
+
+          <h2>Libraries</h2>
+          <p>OpenAI Gym/Stable Baselines3, RLlib.</p>
+        `
+      },
+
+      'ethics':{
+        title:'Ethics & Safety in AI',
+        subtitle:'Fairness, transparency, privacy, and alignment',
+        content:`
+          <h2>Why ethics matters</h2>
+          <p>AI systems impact society. Consider fairness (bias), privacy (data protection), transparency (explainability), and safety (robustness to failures).</p>
+
+          <h2>Practical steps</h2>
+          <ul>
+            <li>Audit datasets for bias</li>
+            <li>Use differential privacy when appropriate</li>
+            <li>Provide explanations and human-in-the-loop review for critical decisions</li>
+          </ul>
+        `
+      },
+
+      'tools':{
+        title:'Tools & Resources',
+        subtitle:'Environments, datasets, and learning materials',
+        content:`
+          <h2>Datasets</h2>
+          <p>ImageNet, COCO, SQuAD, GLUE, Common Crawl, CIFAR, MNIST.</p>
+
+          <h2>Platforms</h2>
+          <p>Hugging Face, Kaggle, Google Colab, Papers With Code.</p>
+
+          <h2>Books & courses</h2>
+          <ul>
+            <li>Deep Learning (Goodfellow)</li>
+            <li>CS231n (Stanford) — vision</li>
+            <li>CS224n (Stanford) — NLP</li>
+          </ul>
+        `
+      },
+
+      'about':{
+        title:'About Pseudo AI Learner',
+        subtitle:'What you want to know',
+        content:`
+          <h2>CREATED BY ft_aromal_</h2>
+          <p><a href="mailto:aromalbm07@gmail.com">Connect with me</a>.</p>
+          <p>PSEUDO AI LEARNER is a Beginner level Ai Website which gives you basics of Artificial intelligence </p>
+          <h2>TELEGRAM</h2>
+          <p>If you are intrested in studying more about Artificial Intelligence Join Our Telegram Channel. </p>
+          <a href="https://t.me/+ZQVa4iOt7t1kMGQ9" target="_blank">Join our Telegram Channel</a>
+          <h2>INSTAGRAM</h2>  
+          <a href="https://www.instagram.com/_ft_aromal_?igsh=cm0wNW8zbDdrZ3p0&utm_source=qr" target="_blank">Message me on Instagram</a> 
+          <h2>WHATSAPP</h2> 
+          <!-- WhatsApp Chat Button -->
+<a href="https://wa.me/8156978231" target="_blank" class="whatsapp-link">
+  Message me on Whatsapp
+</a>
+
+        `
+      }
+    };
+
+    // build navigation and toc
+    const keys = Object.keys(PAGES);
+    const tocEl = document.getElementById('toc');
+    const topnav = document.getElementById('topnav');
+
+    function makeLink(id,label){
+      const a = document.createElement('a');
+      a.href = '#'+id;
+      a.className = 'navlink';
+      a.textContent = label;
+      return a;
+    }
+
+    // top nav quick links
+    ['home','introduction','ml','dl','nlp','cv','rl','ethics','tools','about'].forEach(k=>{
+      topnav.appendChild(makeLink(k, PAGES[k].title.split(' ')[0]));
+    });
+
+    // sidebar toc
+    function renderTOC(filter=''){
+      tocEl.innerHTML='';
+      keys.forEach(k=>{
+        const title = PAGES[k].title;
+        if(filter && !title.toLowerCase().includes(filter.toLowerCase()) && !k.includes(filter.toLowerCase())) return;
+        const div = document.createElement('div');
+        div.className='topic';
+        div.textContent = title;
+        div.dataset.page=k;
+        div.onclick = ()=>{navigateTo(k)};
+        tocEl.appendChild(div);
+      });
+    }
+    renderTOC();
+
+    // search
+    document.getElementById('search').addEventListener('input', e=>renderTOC(e.target.value.trim()));
+    document.getElementById('openall').addEventListener('click', ()=>{document.getElementById('search').value='';renderTOC('');});
+
+    // routing & rendering
+    function setActiveToc(p){
+      document.querySelectorAll('.topic').forEach(el=>el.classList.toggle('active', el.dataset.page===p));
+    }
+    function navigateTo(page){
+      location.hash = '#'+page;
+      render(page);
+    }
+    function render(page){
+      const meta = PAGES[page] || PAGES['home'];
+      document.getElementById('pagetitle').textContent = meta.title;
+      document.getElementById('pagesub').textContent = meta.subtitle;
+      document.getElementById('content').innerHTML = meta.content;
+
+      setActiveToc(page);
+      // internal anchor links handling
+      document.querySelectorAll('#content a.inline').forEach(a=>{
+        a.addEventListener('click', (ev)=>{
+          ev.preventDefault();
+          const href = a.getAttribute('href');
+          const name = href.replace('#','');
+          navigateTo(name);
+        });
+      });
+    }
+
+    // initial load
+    window.addEventListener('hashchange', ()=>{
+      const page = location.hash.replace('#','') || 'home';
+      render(page);
+    });
+    (function(){
+      const page = location.hash.replace('#','') || 'home';
+      render(page);
+    })();
+
+    // keyboard quick nav (1..9)
+    window.addEventListener('keydown', e=>{
+      if(e.altKey || e.ctrlKey || e.metaKey) return;
+      const map = ['home','introduction','ml','dl','nlp','cv','rl','ethics','tools','about'];
+      if(e.key>='0' && e.key<='9'){
+        const n = Number(e.key);
+        const idx = Math.min(map.length-1, Math.max(0,n));
+        navigateTo(map[idx]);
+      }
+    });
+
+  </script>
+</body>
+</html>
