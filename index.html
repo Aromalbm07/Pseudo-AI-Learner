@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Pseudo AI Learner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/styles/style.css">
+  <!-- Single-file production (styles included here for deployment) -->
   <style>
     :root {
       --white: #fff;
@@ -19,88 +19,95 @@
     }
     html, body {
       transition: background .35s, color .25s;
+      margin: 0; padding: 0;
+      scroll-behavior: smooth;
     }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: var(--very-light);
       color: var(--gray);
       min-height: 100vh;
-      transition: background .35s, color .25s;
+      width: 100vw;
+      overflow-x: hidden;
     }
     .navbar {
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--white); padding: 0.8rem 2rem; box-shadow: 0 2px 6px rgba(25,102,211,0.05);
+      background: var(--white); 
+      padding: 0.8rem 2rem; 
+      box-shadow: 0 2px 6px rgba(25,102,211,0.05);
       position: sticky; top: 0; z-index: 10;
+      flex-wrap: wrap;
     }
-    .logo { font-size: 2rem; font-weight: 700; letter-spacing: -1px; color: var(--blue); }
-    .logo span { color: var(--green); }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links li { position: relative; }
-    .nav-links a { color: var(--gray); text-decoration: none; font-weight: 500; transition: color 0.2s; font-size: 1rem; }
-    .nav-links a:hover { color: var(--blue); }
+    .logo { font-size: 2rem; font-weight: 700; letter-spacing: -1px; color: var(--blue);}
+    .logo span { color: var(--green);}
+    .nav-links { display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0;}
+    .nav-links li { position: relative;}
+    .nav-links a { color: var(--gray); text-decoration: none; font-weight: 500; transition: color 0.2s; font-size: 1rem; padding: 0.5rem 0;}
+    .nav-links a:hover { color: var(--blue);}
     .dropdown .dropdown-content {
-      display: none; position: absolute; background: var(--white); min-width: 170px; box-shadow: 0 6px 24px rgba(0,0,0,0.09);
-      z-index: 2; top: 2.2rem; left: 0; border-radius: 12px;
+      display: none;
+      position: absolute; left: 0; top: 2.2rem; min-width: 170px;
+      background: var(--white);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+      border-radius: 12px; z-index: 2;
     }
-    .dropdown:hover .dropdown-content { display: block; }
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+      display: block;
+    }
     .dropdown-content li { padding: 0.4rem 1.2rem;}
-    .dropdown-content a { color: var(--muted); font-size: 0.95rem; }
-    .dropdown-content a:hover { color: var(--green); }
-    .hero { padding: 3rem 2rem 2rem 2rem; background: linear-gradient(105deg, var(--blue) 60%, var(--green) 100%); color: var(--white); text-align: center; border-radius: 0 0 24px 24px; }
-    .hero-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; }
+    .dropdown-content a { color: var(--muted); font-size: 0.95rem;}
+    .dropdown-content a:hover { color: var(--green);}
+    /* Hamburger menu (Mobile) */
+    .nav-toggle {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      width: 35px; height: 35px; justify-content: center; align-items: center;
+    }
+    .nav-toggle span {
+      display: block; width: 28px; height: 4px; background: var(--blue); border-radius: 2px;
+      transition: all .3s;
+    }
+    /* Responsive HERO */
+    .hero {
+      padding: 3rem 2rem 2rem 2rem;
+      background: linear-gradient(105deg, var(--blue) 60%, var(--green) 100%);
+      color: var(--white);
+      text-align: center;
+      border-radius: 0 0 24px 24px;
+      margin-bottom: 1rem;
+    }
+    .hero-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px;}
     .hero-subtitle { font-size: 1.3rem; margin: 1rem 0 2rem 0; font-weight: 400;}
     .hero-buttons { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-    .btn { padding: 0.85rem 2rem; background: var(--green); color: var(--white); border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 2px 12px rgba(16,209,135,0.09); cursor: pointer; transition: background 0.23s; text-decoration: none; margin-bottom: 1rem; }
-    .btn:hover { background: var(--blue); }
-    .section { max-width: 1050px; margin: 3rem auto; padding: 0 1.5rem; }
-    .section-title { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; color: var(--blue); }
-    .card-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
-    .card { background: var(--white); padding: 2rem 1.3rem 1.5rem 1.3rem; border-radius: 18px; min-width: 230px; flex: 1 0 220px; max-width: 290px; box-shadow: 0 3px 25px 0 rgba(25, 102, 211, 0.08); transition: transform 0.17s, box-shadow 0.17s; border-left: 4px solid var(--green); }
-    .card:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 5px 32px 0 rgba(25, 102, 211, 0.15); border-left: 8px solid var(--blue); }
-    .card-title { color: var(--blue); font-size: 1.2rem; font-weight: 700; }
-    .card-desc { color: var(--muted); margin-top: 0.6rem; font-size: 1rem; }
-    .note-category-list { display: flex; flex-wrap: wrap; gap: 1.7rem; justify-content: center; margin-top: 2.7rem; }
+    .btn { padding: 0.85rem 2rem; background: var(--green); color: var(--white); border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 2px 12px rgba(16,209,135,0.09); cursor: pointer; transition: background 0.23s; text-decoration: none; margin-bottom: 1rem;}
+    .btn:hover { background: var(--blue);}
+    .section { max-width: 1050px; margin: 3rem auto; padding: 0 1.5rem;}
+    .section-title { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; color: var(--blue);}
+    .card-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;}
+    .card { background: var(--white); padding: 2rem 1.3rem 1.5rem 1.3rem; border-radius: 18px; min-width: 230px; flex: 1 0 220px; max-width: 290px; box-shadow: 0 3px 25px 0 rgba(25, 102, 211, 0.08); transition: transform 0.17s, box-shadow 0.17s; border-left: 4px solid var(--green);}
+    .card:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 5px 32px 0 rgba(25, 102, 211, 0.15); border-left: 8px solid var(--blue);}
+    .card-title { color: var(--blue); font-size: 1.2rem; font-weight: 700;}
+    .card-desc { color: var(--muted); margin-top: 0.6rem; font-size: 1rem;}
+    .note-category-list { display: flex; flex-wrap: wrap; gap: 1.7rem; justify-content: center; margin-top: 2.7rem;}
     .note-category-card {
       background: var(--white); padding: 1.6rem; border-radius: 13px;
-      min-width: 210px; flex: 1 0 210px; max-width: 280px; box-shadow: 0 2px 14px 0 rgba(25, 102, 211, 0.12); border-left: 3px solid var(--blue); text-align: center; transition: border-left .15s, box-shadow .17s; cursor: pointer;
+      min-width: 210px; flex: 1 0 210px; max-width: 280px; box-shadow: 0 2px 14px 0 rgba(25, 102, 211, 0.12);
+      border-left: 3px solid var(--blue); text-align: center;
+      transition: border-left .15s, box-shadow .17s; cursor: pointer;
     }
     .note-category-card:hover { border-left: 7px solid var(--green); box-shadow: 0 3px 25px 0 rgba(16, 209, 135, 0.21);}
-    .note-category-card a { color: var(--blue); font-weight: 700; text-decoration: none; display: block; font-size: 1.12rem; }
-    .tabs { display: flex; flex-wrap: wrap; gap: 1.1rem; justify-content: center; margin-bottom: 2rem; }
-    .tab-btn { background: var(--white); color: var(--blue); border: 2px solid var(--blue); border-radius: 22px; font-weight: 600; padding: 0.55rem 1.25rem; font-size: 1rem; transition: background 0.18s, color 0.18s; cursor: pointer; margin-bottom: 1rem; }
-    .tab-btn.active, .tab-btn:hover { background: var(--blue); color: var(--white); border-color: var(--green); }
+    .note-category-card a { color: var(--blue); font-weight: 700; text-decoration: none; display: block; font-size: 1.12rem;}
+    .tabs { display: flex; flex-wrap: wrap; gap: 1.1rem; justify-content: center; margin-bottom: 2rem;}
+    .tab-btn { background: var(--white); color: var(--blue); border: 2px solid var(--blue); border-radius: 22px; font-weight: 600; padding: 0.55rem 1.25rem; font-size: 1rem; transition: background 0.18s, color 0.18s; cursor: pointer; margin-bottom: 1rem;}
+    .tab-btn.active, .tab-btn:hover { background: var(--blue); color: var(--white); border-color: var(--green);}
     .tab-content { display: none; opacity: 0; transition: opacity 0.3s;}
-    .tab-content.active { display: block; opacity: 1; }
-    .notes-main { max-width: 850px; margin: 2.5rem auto; background: var(--white); border-radius: 16px; padding: 2.5rem 2.2rem; }
-    .notes-main h1 { color: var(--blue); font-size: 1.6rem; margin-bottom: 1.2rem;}
-    .notes-main h2 { color: var(--green); font-size: 1.18rem; margin: 1.3rem 0 0.7rem 0;}
-    .notes-main ul { margin-bottom: 1.4rem; }
-    .notes-main li { margin-bottom: 0.5rem; }
-    /* SLIDE CAROUSEL STYLES */
-    .slide-container { background: var(--white); border-radius: 16px; box-shadow: 0 3px 25px 0 rgba(25,102,211,0.09); max-width: 900px; margin: 2.5rem auto; padding: 0; overflow: hidden; position: relative;}
-    .slide-wrapper { position: relative; height: 500px; overflow: hidden;}
-    .slide { position: absolute; width: 100%; height: 100%; padding: 3rem 2.5rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, #f6f9fa 0%, var(--white) 100%); opacity: 0; transform: translateX(100%); transition: opacity 0.7s cubic-bezier(.4,.0,.2,1), transform 0.7s cubic-bezier(.4,.0,.2,1); }
-    .slide.active { opacity: 1; transform: translateX(0); z-index: 10;}
-    .slide.prev { transform: translateX(-100%);}
-    .slide h1 { color: var(--blue); font-size: 2.1rem; margin-bottom: 0.8rem; font-weight: 800; }
-    .slide h2 { color: var(--green); font-size: 1.4rem; margin: 1.2rem 0 0.7rem 0; font-weight: 700; }
-    .slide p { color: var(--gray); font-size: 1.1rem; line-height: 1.7; margin-bottom: 1rem; }
-    .slide ul { margin: 1rem 0 1.5rem 1.6rem; }
-    .slide li { margin-bottom: 0.6rem; color: var(--muted); font-size: 1.05rem; line-height: 1.6; }
-    .slide-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; background: var(--very-light); border-top: 2px solid #e3eef8; }
-    .slide-nav-btn { background: var(--blue); color: var(--white); border: none; border-radius: 8px; padding: 0.7rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.18s, transform 0.12s;}
-    .slide-nav-btn:hover { background: var(--green); transform: translateY(-2px);}
-    .slide-nav-btn:disabled { background: #ccc; cursor: not-allowed; transform: none;}
-    .slide-counter { color: var(--blue); font-weight: 700; font-size: 1.05rem; }
-    .slide-dots { display: flex; gap: 0.5rem; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s;}
-    .dot.active { background: var(--green); }
-    /* Quiz Widget Styles */
-    .quiz-container { background: var(--white); max-width: 630px; margin:2.7rem auto 1.5rem auto; border-radius:13px; box-shadow: 0 3px 19px 0 rgba(25,102,211,0.10); padding:2rem 1.8rem; animation:quizFadeIn 1.1s; }
+    .tab-content.active { display: block; opacity: 1;}
+    .notes-main { max-width: 850px; margin: 2.5rem auto; background: var(--white); border-radius: 16px; padding: 2.5rem 2.2rem;}
+    .quiz-container { background: var(--white); max-width: 630px; margin:2.7rem auto 1.5rem auto; border-radius:13px; box-shadow: 0 3px 19px 0 rgba(25,102,211,0.10); padding:2rem 1.8rem; animation:quizFadeIn 1.1s;}
     @keyframes quizFadeIn {from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
     .quiz-title {font-size:1.42rem; font-weight:900; color:var(--blue); margin-bottom:1.1rem;}
     .quiz-question {font-size:1.08em; color:var(--gray); font-weight:600;}
-    .quiz-options {list-style:none;margin:0.7rem 0 1rem 0;}
+    .quiz-options {list-style:none;margin:0.7rem 0 1rem 0;padding:0;}
     .quiz-options li { background:var(--very-light); margin:.6rem 0; padding:.9em 1.1em; border-radius:8px; cursor:pointer; transition:background .14s, border .12s; border:2px solid transparent; font-size:1.09em; }
     .quiz-options li.selected { background: var(--blue); color: #fff; border:2px solid var(--green);}
     .quiz-options li.correct { background: var(--green); color:#fff; border:2px solid var(--green);}
@@ -108,8 +115,26 @@
     .quiz-submit {margin-top:0.7em;padding:0.65em 1.7em;background:var(--green);color:#fff; border:none;border-radius:7px;font-weight:700;font-size:1.08em;cursor:pointer;transition:background .15s;}
     .quiz-submit:hover {background:var(--blue);}
     .quiz-result-msg {margin-top:1.25em;font-size:1.11em;font-weight:700;}
+    .slide-container { background: var(--white); border-radius: 16px; box-shadow: 0 3px 25px 0 rgba(25,102,211,0.09); max-width: 900px; margin: 2.5rem auto; padding: 0; overflow: hidden; position: relative;}
+    .slide-wrapper { position: relative; height: 500px; overflow: hidden;}
+    .slide { position: absolute; width: 100%; height: 100%; padding: 3rem 2.5rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, #f6f9fa 0%, var(--white) 100%); opacity: 0; transform: translateX(100%); transition: opacity 0.7s cubic-bezier(.4,.0,.2,1), transform 0.7s cubic-bezier(.4,.0,.2,1);}
+    .slide.active { opacity: 1; transform: translateX(0); z-index: 10;}
+    .slide.prev { transform: translateX(-100%);}
+    .slide h1 { color: var(--blue); font-size: 2.1rem; margin-bottom: 0.8rem; font-weight: 800;}
+    .slide h2 { color: var(--green); font-size: 1.4rem; margin: 1.2rem 0 0.7rem 0; font-weight: 700;}
+    .slide p { color: var(--gray); font-size: 1.1rem; line-height: 1.7; margin-bottom: 1rem;}
+    .slide ul { margin: 1rem 0 1.5rem 1.6rem;}
+    .slide li { margin-bottom: 0.6rem; color: var(--muted); font-size: 1.05rem; line-height: 1.6;}
+    .slide-nav { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; background: var(--very-light); border-top: 2px solid #e3eef8;}
+    .slide-nav-btn { background: var(--blue); color: var(--white); border: none; border-radius: 8px; padding: 0.7rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.18s, transform 0.12s;}
+    .slide-nav-btn:hover { background: var(--green); transform: translateY(-2px);}
+    .slide-nav-btn:disabled { background: #ccc; cursor: not-allowed; transform: none;}
+    .slide-counter { color: var(--blue); font-weight: 700; font-size: 1.05rem;}
+    .slide-dots { display: flex; gap: 0.5rem;}
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s;}
+    .dot.active { background: var(--green);}
     .contact-card-info { background: var(--white); border-left: 4px solid var(--blue); box-shadow: 0 2px 14px 0 rgba(25,102,211,0.09); border-radius: 13px; padding: 1.3rem 1.1rem 1rem 1.4rem; max-width: 470px; margin:25px auto 24px auto; font-size: 1.12em; display: flex; flex-direction: column; gap:1.35rem; align-items:stretch; text-align: left; animation: contactFadeIn 1.2s cubic-bezier(.4,2.25,.43,1);}
-    @keyframes contactFadeIn {0% { opacity: 0; transform: scale(.8) translateY(35px);} 80%{opacity:.99;transform:scale(1.05) translateY(-7px);} 100% { opacity:1; transform:scale(1) translateY(0);}
+    @keyframes contactFadeIn {0%{opacity:0;transform:scale(.8) translateY(35px);} 80%{opacity:.99;transform:scale(1.05) translateY(-7px);} 100%{opacity:1;transform:scale(1) translateY(0);}
     }
     .contact-cta-btn { display:inline-flex;align-items:center;gap:13px; font-size:1.17em;font-weight:600;padding:.76em 1.5em .76em 1.2em; background:var(--white);border:none;border-radius:30px;margin-bottom:2px; box-shadow:0 2px 12px rgba(16,209,135,0.10); transition:background .19s,transform .14s, box-shadow .14s; color: var(--blue);cursor:pointer;outline:none;position:relative; border:2px solid var(--green); will-change:transform,box-shadow; overflow:hidden; }
     .contact-cta-btn svg{width:25px;height:25px;filter:drop-shadow(0 1px 2px #eee);}
@@ -120,16 +145,71 @@
     .contact-cta-btn.gmail { border-color: var(--gmail);}
     .contact-cta-btn.gmail svg { fill: var(--gmail);}
     .contact-cta-btn:hover { background:var(--green);color:#fff; transform:scale(1.08) translateY(-2.5px); box-shadow:0 6px 18px 0 rgba(25,102,211,0.11); animation: bounceBtn 0.18s 1;}
-    @keyframes bounceBtn {0%{transform:scale(1.09) translateY(-3px);} 20%{transform:scale(1.19) translateY(-3.5px);} 70%{transform:scale(.99) translateY(1.5px);} 100%{transform:scale(1.08) translateY(-2.5px);}}
+    @keyframes bounceBtn {0%{transform:scale(1.09) translateY(-3px);} 20%{transform:scale(1.19) translateY(-3.5px);} 70%{transform:scale(.99) translateY(1.5px);} 100%{transform:scale(1.08) translateY(-2.5px);}
+    }
     .contact-label {font-size:1.17em;font-weight:700;color:var(--blue);margin-bottom:7px;}
     footer { margin-top:2.5rem;background:var(--white);color:var(--muted);text-align:center; padding:1.3rem 0 1rem 0;font-size:1rem;border-top:1.5px solid #d1e3fa;}
     .footer-links { margin-bottom: 0.6rem; }
-    .footer-links a { color: var(--blue); text-decoration: none; margin: 0 0.5rem; }
-    .footer-links a:hover { color: var(--green); }
-    .footer-note { font-size: 0.98rem; margin-top: 0.4rem; }
-    @media(max-width:900px){.card-list,.note-category-list{flex-direction:column;gap:1.5rem;} .card,.note-category-card{max-width:unset;min-width:unset;}}
-    @media(max-width:600px){.navbar{flex-direction:column;padding:0.8rem 1rem;gap:1rem;} .nav-links{flex-direction:column;gap:0.7rem;} .section,.notes-main,.contact-card-info{padding:1.1rem 0.7rem;} .card{padding:1.4rem 0.7rem;} .slide-wrapper{height:600px;} .slide{padding:2rem 1.5rem;} .slide h1 { font-size: 1.7rem; } .slide h2 { font-size: 1.2rem; } .slide p { font-size: 1rem; }
-      .quiz-container{padding:1.1rem 6vw;}
+    .footer-links a { color: var(--blue); text-decoration: none; margin: 0 0.5rem;}
+    .footer-links a:hover { color: var(--green);}
+    .footer-note { font-size: 0.98rem; margin-top: 0.4rem;}
+    @media(max-width:1100px){
+      .card-list, .note-category-list{gap:1.2rem;}
+    }
+    @media(max-width:900px){
+      .card-list, .note-category-list {flex-direction:column; gap:1.5rem;}
+      .card,.note-category-card{max-width:unset;min-width:unset;}
+      .section {padding:0 0.6rem;}
+      .slide-wrapper {height:460px;}
+      .slide {padding:2rem 1.35rem;}
+      .contact-card-info{padding:1.3rem 0.4rem 1rem 0.7rem;}
+    }
+    @media(max-width:650px){
+      .quiz-container, .notes-main{padding:1rem 5vw;}
+      .slide-wrapper {height: 450px;}
+      .slide {padding:1.2rem 0.7rem;}
+      .slide h1 { font-size: 1.3rem; }
+      .slide h2 { font-size: 1.05rem; }
+      .slide p, .slide li { font-size: 0.98rem; }
+    }
+    @media(max-width:600px){
+      .navbar{flex-direction:column;padding:0.8rem 1rem;gap:1rem;}
+      .nav-links{flex-direction:column;align-items:stretch;width:100%;gap:0.2rem;}
+      .section,.notes-main,.contact-card-info{padding:1.1rem 0.7rem;}
+      .card{padding:1.1rem 0.7rem;}
+      .slide-wrapper{height:380px;}
+      .slide{padding:0.8rem 0.5rem;}
+      .slide-nav{flex-direction:column;gap:1.2rem;padding:0.8rem;}
+      .slide-nav-btn, .slide-counter {font-size:0.95rem;padding:0.6rem 1rem;}
+      .slide h1 { font-size: 1.02rem;}
+      .slide h2 { font-size:0.93rem;}
+      .tabs {gap: 0.3rem;}
+      .tab-btn{font-size:0.97rem;padding:0.38rem 0.7rem;}
+    }
+    @media (max-width:480px){
+      .slide-wrapper{height: 260px;}
+      .slide{padding:0.4rem 0.4rem;}
+      .notes-main{padding:0.5rem 0.2rem;}
+      .quiz-container{padding:0.5rem 0.2rem;}
+      .section{padding:0.4rem 0.3rem;}
+    }
+    @media (max-width:400px){
+      .logo {font-size:1.15rem;}
+      .slide h1 {font-size:0.95rem;}
+    }
+    @media(max-width:600px){
+      .nav-toggle {
+        display: flex !important;
+      }
+      .nav-links {
+        display: none;
+        background: var(--white);
+        position: absolute;
+        top: 60px; left: 0;
+        width: 100vw; z-index: 100;
+        flex-direction: column; gap:0.3rem; border-radius: 0 0 17px 17px; box-shadow: 0 4px 24px 0 rgba(25, 102, 211, 0.13);
+      }
+      .nav-links.show { display: flex; }
     }
   </style>
 </head>
@@ -138,7 +218,10 @@
   <header>
     <nav class="navbar">
       <a class="logo" href="#">Pseudo <span>AI Learner</span></a>
-      <ul class="nav-links">
+      <div class="nav-toggle" id="navToggle" aria-label="Open menu" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About</a></li>
         <li class="dropdown">
@@ -222,8 +305,6 @@
       <div id="math" class="tab-content notes-main"><h1>Mathematical Foundations</h1><h2>Essentials</h2><ul><li>Statistics, probability, linear algebra, calculus.</li></ul></div>
       <div id="ethics" class="tab-content notes-main"><h1>Ethical AI</h1><h2>Concerns</h2><ul><li>Fairness, accountability, transparency, privacy, bias mitigation.</li></ul></div>
     </section>
-
-    <!-- Quiz Widget Example -->
     <section class="quiz-container">
       <div class="quiz-title">AI Fundamentals Quiz</div>
       <div class="quiz-question" id="quizQ"></div>
@@ -231,29 +312,19 @@
       <button class="quiz-submit" id="quizSubmitBtn">Submit Answer</button>
       <div class="quiz-result-msg" id="quizResult"></div>
     </section>
-
-    <!-- ABOUT SECTION WITH SLIDE CAROUSEL -->
     <section id="about">
       <div class="section">
         <h2 class="section-title">What is Pseudo AI Learner?</h2>
         <div class="slide-container">
           <div class="slide-wrapper">
-            <!-- 8 Slides as given previously ... -->
-            <!-- Slide 1 -->
+            <!-- 8 Slides -->
             <div class="slide active"><h1>Welcome to Pseudo AI Learner</h1><h2>Your Learning Companion</h2><p>Pseudo AI Learner is a modern, comprehensive learning platform designed for anyone passionate about artificial intelligence, machine learning, and data science. Whether you're a complete beginner or an advanced researcher, we provide structured, accessible content.</p><ul><li>📚 Free, high-quality educational resources</li><li>🎯 Structured learning paths from basics to advanced</li><li>💡 Real-world examples and applications</li><li>🌍 Community-driven knowledge sharing</li></ul></div>
-            <!-- Slide 2 -->
             <div class="slide"><h1>Who is Pseudo AI Learner For?</h1><h2>Diverse Learner Community</h2><p>Our platform serves a wide range of learners with different backgrounds, experience levels, and goals:</p><ul><li><b>🎓 University Students:</b> Supplement your academic curriculum with detailed, hands-on explanations.</li><li><b>💻 Developers:</b> Learn practical AI/ML implementation using Python, TensorFlow, PyTorch.</li><li><b>🔬 Researchers:</b> Dive deep into cutting-edge AI topics and advanced concepts.</li><li><b>🚀 Career Changers:</b> Transition into AI/ML roles with comprehensive learning resources.</li><li><b>🌱 Beginners:</b> Start from absolute basics with no prior AI experience needed.</li></ul></div>
-            <!-- Slide 3 -->
             <div class="slide"><h1>How Pseudo AI Learner Helps You</h1><h2>Learning Advantages</h2><p>Our platform offers multiple features designed to accelerate your learning journey and deepen your understanding of AI concepts:</p><ul><li>✅ <b>Structured Curriculum:</b> Topics organized from fundamentals to advanced, ensuring logical progression.</li><li>✅ <b>Code Examples:</b> Practical Python code snippets for implementing algorithms and models.</li><li>✅ <b>Real-World Applications:</b> Learn how concepts apply in industry projects.</li><li>✅ <b>Mathematics Foundations:</b> Understand the math behind ML and DL algorithms.</li><li>✅ <b>Ethical AI Coverage:</b> Learn responsible, fair AI practices.</li></ul></div>
-            <!-- Slide 4 -->
             <div class="slide"><h1>Our Core Learning Areas</h1><h2>Comprehensive Topic Coverage</h2><p>Pseudo AI Learner covers the entire AI landscape with 9 major topic categories:</p><ul><li>🤖 <b>Artificial Intelligence:</b> AI foundations, agent design, reasoning systems.</li><li>📊 <b>Machine Learning:</b> Supervised, unsupervised, and reinforcement learning.</li><li>🧠 <b>Deep Learning:</b> Neural networks, CNNs, RNNs, transformers.</li><li>📝 <b>NLP:</b> Natural language processing, text analysis, language models.</li><li>👁️ <b>Computer Vision:</b> Image processing, object detection, segmentation.</li></ul></div>
-            <!-- Slide 5 -->
             <div class="slide"><h1>Our Vision & Mission</h1><h2>Empowering Global Learners</h2><h2 style="color: var(--blue); font-size: 1rem; margin-top: 1.8rem; margin-bottom: 0.6rem;">🎯 Mission</h2><p>To empower learners worldwide by providing <b>high-quality, free, accessible, and structured AI education</b> that bridges the gap between theory and practice.</p><h2 style="color: var(--blue); font-size: 1rem; margin-top: 1.6rem; margin-bottom: 0.6rem;">🌟 Vision</h2><p>Create a world where <b>anyone can master AI and ML</b>, regardless of background or geography, fostering innovation and responsible technology use globally.</p></div>
-            <!-- Slide 6 -->
             <div class="slide"><h1>Why Choose Pseudo AI Learner?</h1><h2>Our Unique Advantages</h2><ul><li>🎨 <b>Beautiful UI/UX:</b> Clean, modern, responsive design for seamless learning.</li><li>📱 <b>Mobile-Friendly:</b> Learn on the go with fully responsive interface.</li><li>🔄 <b>No Paywall:</b> 100% free education—no hidden costs or premium tiers.</li><li>🚀 <b>Always Updating:</b> Content evolves with latest AI trends and research.</li><li>💬 <b>Community Support:</b> Engage with peers and instructors—ask questions anytime.</li><li>🏆 <b>Production-Ready Content:</b> Concepts taught at industry standard.</li></ul></div>
-            <!-- Slide 7 -->
             <div class="slide"><h1>Features & Tools Covered</h1><h2>Technology & Frameworks</h2><p>Pseudo AI Learner covers industry-standard tools and frameworks:</p><ul><li>🐍 <b>Python:</b> Primary programming language for all examples.</li><li>📚 <b>TensorFlow / Keras:</b> Deep learning frameworks.</li><li>🔥 <b>PyTorch:</b> Flexible deep learning research framework.</li><li>📊 <b>Scikit-learn:</b> Classical ML algorithms and tools.</li><li>👁️ <b>OpenCV:</b> Computer vision library.</li><li>📝 <b>NLTK / spaCy:</b> Natural language processing.</li><li>📈 <b>NumPy / Pandas:</b> Data manipulation and analysis.</li></ul></div>
-            <!-- Slide 8 -->
             <div class="slide"><h1>Getting Started</h1><h2>Begin Your AI Journey Today</h2><p>Start learning with these simple steps:</p><ul><li>📖 <b>Explore Courses:</b> Browse our 9 core categories in the Courses section.</li><li>🎯 <b>Pick a Topic:</b> Choose based on your interests or career goals.</li><li>🧑‍💻 <b>Learn & Code:</b> Read notes, understand concepts, try code examples.</li><li>❓ <b>Ask Questions:</b> Use the contact section to reach out with doubts.</li><li>🤝 <b>Join Community:</b> Connect with us on LinkedIn or Telegram.</li><li>🎓 <b>Build Projects:</b> Apply learning to real-world problems.</li></ul></div>
           </div>
           <div class="slide-nav">
@@ -301,8 +372,19 @@
     </div>
     <div class="footer-note">&copy;Created by Aromal B Madhu.</div>
   </footer>
-  <script src="/scripts/main.js"></script>
   <script>
+    // Hamburger mobile nav 
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+    navToggle.addEventListener('keydown', e => {
+      if(e.key === "Enter" || e.key === " ") navLinks.classList.toggle('show');
+    });
+    document.body.addEventListener('click', function(e){
+      if(window.innerWidth<=600 && !navLinks.contains(e.target) && e.target!==navToggle && navLinks.classList.contains('show')){
+        navLinks.classList.remove('show');
+      }
+    });
     // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.addEventListener("click", function(e) {
@@ -311,6 +393,7 @@
           e.preventDefault();
           target.scrollIntoView({ behavior: "smooth" });
         }
+        if(window.innerWidth<=600) navLinks.classList.remove('show');
       });
     });
     // Tab switching
@@ -389,7 +472,6 @@
       let resultMsg = selectedOption == quizData[quizIndex].correct
         ? "✅ Correct!" : "❌ Incorrect. The right answer is: " + quizData[quizIndex].options[quizData[quizIndex].correct];
       document.getElementById('quizResult').textContent = resultMsg;
-
       setTimeout(()=>{
         quizIndex++; if(quizIndex<quizData.length) {renderQuiz();}
         else {document.querySelector('.quiz-container').innerHTML =
