@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Pseudo AI Learner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="/styles/style.css">
   <style>
     :root {
@@ -17,35 +17,43 @@
       --telegram: #229ED9;
       --gmail: #ea4335;
     }
-    html, body { transition: background .35s, color .25s; }
+    html, body {
+      transition: background .35s, color .25s;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after { box-sizing: inherit; }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: var(--very-light);
       color: var(--gray);
       min-height: 100vh;
+      margin: 0;
       transition: background .35s, color .25s;
     }
     .navbar {
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--white); padding: 0.8rem 2rem; box-shadow: 0 2px 6px rgba(25,102,211,0.05);
+      background: var(--white); padding: 0.8rem 2rem; 
+      box-shadow: 0 2px 6px rgba(25,102,211,0.05);
       position: sticky; top: 0; z-index: 10;
     }
     .logo { font-size: 2rem; font-weight: 700; letter-spacing: -1px; color: var(--blue); }
     .logo span { color: var(--green); }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0;}
     .nav-links li { position: relative; }
     .nav-links a { color: var(--gray); text-decoration: none; font-weight: 500; transition: color 0.2s; font-size: 1rem; }
     .nav-links a:hover { color: var(--blue); }
     .dropdown .dropdown-content {
       display: none; position: absolute; background: var(--white); min-width: 170px; box-shadow: 0 6px 24px rgba(0,0,0,0.09);
-      z-index: 2; top: 2.2rem; left: 0; border-radius: 12px;
+      z-index: 2; top: 2.2rem; left: 0; border-radius: 12px; padding: 0; margin: 0;
     }
-    .dropdown:hover .dropdown-content { display: block; }
+    .dropdown:hover .dropdown-content, .dropdown:focus-within .dropdown-content { display: block; }
     .dropdown-content li { padding: 0.4rem 1.2rem;}
-    .dropdown-content a { color: var(--muted); font-size: 0.95rem; }
+    .dropdown-content a { color: var(--muted); font-size: 0.95rem; display: block;}
     .dropdown-content a:hover { color: var(--green); }
     .hero {
-      padding: 3rem 2rem 2rem 2rem; background: linear-gradient(105deg, var(--blue) 60%, var(--green) 100%);
+      padding: 3rem 2rem 2rem 2rem; 
+      background: linear-gradient(105deg, var(--blue) 60%, var(--green) 100%);
       color: var(--white); text-align: center; border-radius: 0 0 24px 24px;
     }
     .hero-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; }
@@ -55,19 +63,18 @@
       padding: 0.85rem 2rem; background: var(--green); color: var(--white); border: none; border-radius: 30px;
       font-size: 1.1rem; font-weight: 700; box-shadow: 0 2px 12px rgba(16,209,135,0.09); cursor: pointer;
       transition: background 0.23s; text-decoration: none; margin-bottom: 1rem;
+      display: inline-block;
     }
     .btn:hover { background: var(--blue); }
-    .section { max-width: 1050px; margin: 3rem auto; padding: 0 1.5rem; }
+
+    .section { max-width: 1050px; margin: 3rem auto; padding: 0 1.5rem; width: 100%; }
     .section-title { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; color: var(--blue); }
-    /* --- Animated Feature Cards --- */
     .card-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
     .card.feature {
-      position: relative;
-      background: var(--white); padding: 2rem 1.3rem 1.5rem 1.3rem;
-      border-radius: 18px; min-width: 230px; flex: 1 0 220px; max-width: 290px;
+      position: relative; background: var(--white); padding: 2rem 1.3rem 1.5rem 1.3rem; border-radius: 18px; 
+      min-width: 230px; flex: 1 0 220px; max-width: 290px;
       box-shadow: 0 4px 28px 0 rgba(25, 102, 211, 0.10);
-      border-left: 6px solid var(--green);
-      animation: fadeUp 1.3s cubic-bezier(.57,.18,.36,1) both;
+      border-left: 6px solid var(--green); animation: fadeUp 1.3s cubic-bezier(.57,.18,.36,1) both;
       transition: transform 0.17s, box-shadow 0.17s, background 0.15s, border-left 0.15s;
     }
     @keyframes fadeUp {
@@ -87,7 +94,7 @@
     .card.feature:hover .card-title,
     .card.feature:hover .card-desc { color: #fff; }
     /* Carousel styles */
-    .slide-container { background: var(--white); border-radius: 16px; box-shadow: 0 3px 25px 0 rgba(25,102,211,0.09); max-width: 900px; margin: 2.5rem auto; padding: 0; overflow: hidden; position: relative;}
+    .slide-container { background: var(--white); border-radius: 16px; box-shadow: 0 3px 25px 0 rgba(25,102,211,0.09); max-width: 900px; margin: 2.5rem auto; padding: 0; overflow: hidden; position: relative; }
     .slide-wrapper { position: relative; height: 500px; overflow: hidden;}
     .slide { position: absolute; width: 100%; height: 100%; padding: 3rem 2.5rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, #f6f9fa 0%, var(--white) 100%); opacity: 0; transform: translateX(100%); transition: opacity 0.7s cubic-bezier(.4,.0,.2,1), transform 0.7s cubic-bezier(.4,.0,.2,1); }
     .slide.active { opacity: 1; transform: translateX(0); z-index: 10;}
@@ -97,12 +104,12 @@
     .slide p { color: var(--gray); font-size: 1.1rem; line-height: 1.7; margin-bottom: 1rem; }
     .slide ul { margin: 1rem 0 1.5rem 1.6rem; }
     .slide li { margin-bottom: 0.6rem; color: var(--muted); font-size: 1.05rem; line-height: 1.6; }
-    .slide-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; background: var(--very-light); border-top: 2px solid #e3eef8; }
+    .slide-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; background: var(--very-light); border-top: 2px solid #e3eef8; flex-wrap: wrap;}
     .slide-nav-btn { background: var(--blue); color: var(--white); border: none; border-radius: 8px; padding: 0.7rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.18s, transform 0.12s;}
     .slide-nav-btn:hover { background: var(--green); transform: translateY(-2px);}
     .slide-nav-btn:disabled { background: #ccc; cursor: not-allowed; transform: none;}
-    .slide-counter { color: var(--blue); font-weight: 700; font-size: 1.05rem; }
-    .slide-dots { display: flex; gap: 0.5rem; }
+    .slide-counter { color: var(--blue); font-weight: 700; font-size: 1.05rem; margin: 0 10px;}
+    .slide-dots { display: flex; gap: 0.5rem; flex-wrap: wrap;}
     .dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s;}
     .dot.active { background: var(--green); }
     /* Quiz Widget Styles + Animations */
@@ -110,7 +117,7 @@
     @keyframes quizFadeIn {from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
     .quiz-title {font-size:1.42rem; font-weight:900; color:var(--blue); margin-bottom:1.1rem;}
     .quiz-question {font-size:1.08em; color:var(--gray); font-weight:600;}
-    .quiz-options {list-style:none;margin:0.7rem 0 1rem 0;}
+    .quiz-options {list-style:none;margin:0.7rem 0 1rem 0; padding: 0;}
     .quiz-options li { background:var(--very-light); margin:.6rem 0; padding:.9em 1.1em; border-radius:8px; cursor:pointer; transition:background .14s, border .12s; border:2px solid transparent; font-size:1.09em; }
     .quiz-options li.selected { background: var(--blue); color: #fff; border:2px solid var(--green);}
     .quiz-options li.correct { background: var(--green); color:#fff; border:2px solid var(--green);}
@@ -118,11 +125,8 @@
     .quiz-submit {margin-top:0.7em;padding:0.65em 1.7em;background:var(--green);color:#fff; border:none;border-radius:7px;font-weight:700;font-size:1.08em;cursor:pointer;transition:background .15s;}
     .quiz-submit:hover {background:var(--blue);}
     .quiz-result-msg {margin-top:1.25em;font-size:1.11em;font-weight:700;}
-    /* -- Animations -- */
     .animatedQ {
-      opacity: 0;
-      transform: translateY(35px) scale(.95);
-      animation: quizQFadeIn .77s cubic-bezier(.47,.35,.36,1) forwards;
+      opacity: 0; transform: translateY(35px) scale(.95); animation: quizQFadeIn .77s cubic-bezier(.47,.35,.36,1) forwards;
     }
     @keyframes quizQFadeIn {
       0% { opacity: 0; transform: translateY(35px) scale(.95);}
@@ -162,16 +166,13 @@
       70% { opacity:1; }
       100% { transform: translateY(85px) scale(1.1); opacity:0;}
     }
-    /* Get Started CTA Panel */
     .getstarted-panel {
       display: flex; flex-wrap: wrap; align-items: center;
       background: linear-gradient(90deg, var(--green) 56%, var(--blue) 91%);
       border-radius: 24px;
       box-shadow: 0 8px 42px 0 rgba(25,102,211,0.11);
       padding: 2.3rem 2rem;
-      margin-top:2.1rem;
-      animation: panelFadeIn 1.2s;
-      gap: 2rem;
+      margin-top:2.1rem; gap: 2rem; animation: panelFadeIn 1.2s;
     }
     @keyframes panelFadeIn {from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
     .getstarted-content {flex:1;}
@@ -179,14 +180,12 @@
     .getstarted-content p {color:#eef; font-size:1.18em; margin-bottom:1.45rem;}
     .getstarted-art {
       width:180px; height:140px; background: url('https://cdn.jsdelivr.net/gh/aromalbm/assets@main/ai_learning_rocket.svg') center/contain no-repeat;
-      flex:0 0 180px;
-      animation: rocketBounce 1.38s infinite alternate cubic-bezier(.6,.1,.54,.98);
+      flex:0 0 180px; animation: rocketBounce 1.38s infinite alternate cubic-bezier(.6,.1,.54,.98);
     }
     @keyframes rocketBounce {
       0% { transform: translateY(0);}
       100% { transform: translateY(-13px);}
     }
-    /* Contact */
     .contact-card-info {
       background: var(--white); border-left: 4px solid var(--blue); box-shadow: 0 2px 14px 0 rgba(25,102,211,0.09); border-radius: 13px; padding: 1.3rem 1.1rem 1rem 1.4rem; max-width: 470px; margin:25px auto 24px auto; font-size: 1.12em; display: flex; flex-direction: column; gap:1.35rem; align-items:stretch; text-align: left; animation: contactFadeIn 1.2s cubic-bezier(.4,2.25,.43,1);}
     @keyframes contactFadeIn {0% { opacity: 0; transform: scale(.8) translateY(35px);} 80%{opacity:.99;transform:scale(1.05) translateY(-7px);} 100% { opacity:1; transform:scale(1) translateY(0);}
@@ -207,22 +206,46 @@
     .footer-links a { color: var(--blue); text-decoration: none; margin: 0 0.5rem; }
     .footer-links a:hover { color: var(--green); }
     .footer-note { font-size: 0.98rem; margin-top: 0.4rem; }
+
+    /* -------- MOBILE RESPONSIVENESS --------- */
+    @media(max-width:1200px){
+      .section { max-width: 98vw;}
+      .slide-container { max-width: 97vw; }
+      .quiz-container { max-width: 98vw;}
+    }
     @media(max-width:900px){
       .card-list{flex-direction:column;gap:1.5rem;} .card.feature{max-width:unset;min-width:unset;}
-    }
-    @media(max-width:600px){
-      .navbar{flex-direction:column;padding:0.8rem 1rem;gap:1rem;}
-      .nav-links{flex-direction:column;gap:0.7rem;}
-      .section,.contact-card-info{padding:1.1rem 0.7rem;}
-      .card.feature{padding:1.4rem 0.7rem;}
       .slide-wrapper{height:600px;}
-      .slide{padding:2rem 1.5rem;} .slide h1 { font-size: 1.7rem; } .slide h2 { font-size: 1.2rem; } .slide p { font-size: 1rem; }
-      .quiz-container{padding:1.1rem 6vw;}
-      .getstarted-panel {flex-direction:column;padding:2rem 1rem;}
-      .getstarted-art {width:110px; height:80px;}
-      .getstarted-content h2 { font-size:1.42rem;}
-      .getstarted-content p { font-size:1.08em;}
+      .slide{padding:2.2rem 1.2rem;} .slide h1 { font-size: 1.55rem; } .slide h2 { font-size: 1.1rem; } .slide p { font-size: 1rem; }
     }
+    @media(max-width:650px){
+      .navbar{flex-direction:column;padding:0.6rem 0.5rem;gap:0.7rem;}
+      .nav-links{flex-direction:column;gap:0.3rem;width:100%;align-items:flex-start;}
+      .logo { font-size: 1.32rem; }
+      .section,.contact-card-info{padding:0.2rem 0.15rem;}
+      .card.feature{padding:1.2rem 0.6rem;}
+      .slide-wrapper{height:calc(54vw + 240px);}
+      .slide{padding:1.1rem 0.3rem;}
+      .quiz-container{padding:1.1rem 3vw;}
+      .getstarted-panel {flex-direction:column;padding:2rem 1rem; gap:1rem;}
+      .getstarted-art {width:95px; height:56px;}
+      .getstarted-content h2 { font-size:1.13rem;}
+      .getstarted-content p { font-size:0.98em;}
+      .slide-nav {padding: 0.6rem 0.2rem; font-size:0.92em;}
+    }
+    @media(max-width:400px){
+      html, body { font-size:13.1px;}
+      .quiz-container { padding:0.7rem 1vw;}
+      .getstarted-panel { padding:1rem 0.45rem;}
+      .contact-card-info { padding:.7rem .8rem .7rem .8rem;}
+    }
+    @media(max-width:350px){
+      .logo {font-size:1rem; }
+      .quiz-title {font-size:1rem;}
+      .getstarted-content h2, .section-title {font-size:1.07em;}
+    }
+    /* Dropdown touch support */
+    .dropdown:focus-within .dropdown-content { display: block; }
   </style>
 </head>
 <body>
@@ -233,20 +256,6 @@
       <ul class="nav-links">
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About</a></li>
-        <li class="dropdown">
-          <a href="#courses">Topics</a>
-          <ul class="dropdown-content">
-            <li><a href="#ai">AI</a></li>
-            <li><a href="#ml">Machine Learning</a></li>
-            <li><a href="#dl">Deep Learning</a></li>
-            <li><a href="#nlp">NLP</a></li>
-            <li><a href="#cv">Computer Vision</a></li>
-            <li><a href="#rl">Reinforcement Learning</a></li>
-            <li><a href="#tools">AI Tools</a></li>
-            <li><a href="#math">Mathematics</a></li>
-            <li><a href="#ethics">Ethics</a></li>
-          </ul>
-        </li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -368,9 +377,7 @@
     </div>
     <div class="footer-note">&copy;Created by Aromal B Madhu.</div>
   </footer>
-  <script src="/scripts/main.js"></script>
   <script>
-    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.addEventListener("click", function(e) {
         const target = document.querySelector(this.getAttribute("href"));
@@ -440,7 +447,6 @@
       document.getElementById('quizResult').textContent = '';
       selectedOption = null;
     }
-
     renderQuiz();
     window.selectOption = function(idx) {
       selectedOption = idx;
@@ -483,6 +489,15 @@
         }
       },1500);
     };
+    // Better focus support for dropdown on touch
+    document.querySelectorAll('.dropdown > a').forEach(trigger => {
+      trigger.addEventListener('focus', function() {
+        this.parentElement.classList.add('focus');
+      });
+      trigger.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focus');
+      });
+    });
   </script>
 </body>
 </html>
